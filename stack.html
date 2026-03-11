@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATRIX DEV LAB</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --text-main: #111418;
+            --text-muted: #5e656d;
+            --accent: #00e5ff;
+            --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            --bracket-size: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html { width: 100vw; min-height: 100vh; background-color: var(--bg-color); color: var(--text-main); font-family: var(--font-heading); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        
+        /* Grid Background */
+        .grid-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(17, 20, 24, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(17, 20, 24, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: -1; opacity: 0.5;
+            transform: perspective(1000px) rotateX(60deg) scale(2.5) translateY(-20%);
+        }
+
+        /* Top Navigation */
+        nav { position: relative; width: 100%; padding: 2rem 3rem; display: flex; justify-content: space-between; align-items: center; z-index: 50; }
+        .logo { display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 1.25rem; letter-spacing: -0.02em; }
+        .logo-svg { width: 24px; height: 24px; }
+        .nav-center { display: flex; gap: 4rem; font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-link { color: var(--text-main); text-decoration: none; }
+        .nav-link::before { content: '// '; opacity: 0.4; }
+        .nav-right { display: flex; align-items: center; gap: 2rem; }
+        .lang-toggle { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+        .btn-primary { background: var(--text-main); color: var(--bg-color); border: none; padding: 0.75rem 1.5rem; font-size: 0.8rem; font-weight: 600; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; cursor: pointer; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
+        .btn-primary:hover { transform: scale(1.05); }
+
+        /* Brackets */
+        .tech-glass { position: relative; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); display: inline-flex; align-items: center; justify-content: center; padding: 1rem 2rem; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--text-main); cursor: pointer; text-decoration: none; }
+        .brackets::before, .brackets::after { content: ''; position: absolute; width: var(--bracket-size); height: var(--bracket-size); border: 1px solid var(--text-main); }
+        .brackets::before { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .brackets::after { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+        .brackets span::before, .brackets span::after { content: ''; position: absolute; width: var(--bracket-size); height: var(--bracket-size); border: 1px solid var(--text-main); }
+        .brackets span::before { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+        .brackets span::after { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+
+        /* Container Content Layout */
+        .container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; min-height: calc(100vh - 100px); display: flex; flex-direction: column; justify-content: center; }
+        .overline { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.2em; color: var(--text-muted); margin-bottom: 2rem; }
+        .headline { font-size: 4rem; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 3rem; }
+        .headline span.bold { font-weight: 800; display: block; }
+        .headline span.thin { font-weight: 200; display: block; color: var(--text-muted); }
+        
+        /* Grid Layout */
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
+
+        .service-card { display: flex; flex-direction: column; gap: 1rem; padding: 2rem; align-items: flex-start; text-align: left; cursor: default; }
+        .service-card h3 { font-size: 1.25rem; font-weight: 800; text-transform: none; letter-spacing: 0; font-family: var(--font-heading); }
+        .service-card p { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); line-height: 1.6; text-transform: none; }
+
+        .stack-item { display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1.5rem; margin-bottom: 1rem; justify-content: flex-start; cursor: default; }
+        .stack-icon { width: 32px; height: 32px; border: 1px dashed var(--text-muted); opacity: 0.6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .stack-info { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+        .stack-name { font-weight: 800; font-size: 1rem; text-transform: none; letter-spacing: 0; font-family: var(--font-heading); }
+        .stack-role { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); margin-top: 0.2rem; }
+        .stack-category-title { font-family: var(--font-mono); font-size: 0.8rem; letter-spacing: 0.1em; color: var(--text-main); margin-bottom: 1.5rem; font-weight: 600; text-transform: uppercase; }
+
+        /* Forms */
+        .form-group { margin-bottom: 1.5rem; text-align: left; width: 100%; }
+        .form-label { display: block; font-family: var(--font-mono); font-size: 0.75rem; margin-bottom: 0.5rem; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.05em; }
+        .form-control { width: 100%; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(17, 20, 24, 0.2); padding: 1rem 1.25rem; font-family: var(--font-mono); font-size: 0.9rem; color: var(--text-main); outline: none; transition: all 0.2s ease; resize: vertical; }
+        .form-control:focus { border-color: var(--text-main); background: rgba(255, 255, 255, 0.6); }
+        select.form-control { appearance: none; border-radius: 0; cursor: pointer; background-image: linear-gradient(45deg, transparent 50%, var(--text-main) 50%), linear-gradient(135deg, var(--text-main) 50%, transparent 50%); background-position: calc(100% - 20px) calc(1.5em), calc(100% - 15px) calc(1.5em); background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; }
+        
+        @media (max-width: 768px) { .grid-layout { grid-template-columns: 1fr; } .headline { font-size: 3rem; } }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    <nav>
+        <div class="logo">
+            <svg class="logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" />
+                <path d="M2 12h20M12 2v20" />
+                <circle cx="12" cy="12" r="4" fill="currentColor" />
+            </svg>
+            MATRIX DEV LAB
+        </div>
+        <div class="nav-center">
+            <div class="nav-links">
+                <a href="services.html" class="nav-link">Services</a>
+                <a href="stack.html" class="nav-link">Stack</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <span class="lang-toggle">v EN</span>
+            <button class="btn-primary" onclick="window.location.href='contact.html'">Get in touch</button>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="overline">// OUR TECHNOLOGY STACK</div>
+<h1 class="headline">
+    <span class="bold">Built with</span>
+    <span class="thin">precision.</span>
+</h1>
+<div class="grid-layout">
+    <div>
+        <div class="stack-category-title">Web Development</div>
+        <div class="tech-glass brackets stack-item"><span></span>
+            <div class="stack-icon"></div>
+            <div class="stack-info"><div class="stack-name">React</div><div class="stack-role">UI LIBRARY</div></div>
+        </div>
+        <div class="tech-glass brackets stack-item"><span></span>
+            <div class="stack-icon"></div>
+            <div class="stack-info"><div class="stack-name">Next.js</div><div class="stack-role">REACT FRAMEWORK</div></div>
+        </div>
+        <div class="tech-glass brackets stack-item"><span></span>
+            <div class="stack-icon"></div>
+            <div class="stack-info"><div class="stack-name">Node.js</div><div class="stack-role">RUNTIME ENVIRONMENT</div></div>
+        </div>
+        <div class="tech-glass brackets stack-item"><span></span>
+            <div class="stack-icon"></div>
+            <div class="stack-info"><div class="stack-name">Tailwind CSS</div><div class="stack-role">STYLING</div></div>
+        </div>
+    </div>
+    <div>
+        <div class="stack-category-title">App Development</div>
+        <div class="tech-glass brackets stack-item"><span></span>
+            <div class="stack-icon"></div>
+            <div class="stack-info"><div class="stack-name">React Native</div><div class="stack-role">CROSS-PLATFORM</div></div>
+        </div>
+        <div class="tech-glass brackets stack-item"><span></span>
+            <div class="stack-icon"></div>
+            <div class="stack-info"><div class="stack-name">Flutter</div><div class="stack-role">UI TOOLKIT</div></div>
+        </div>
+        <div class="tech-glass brackets stack-item"><span></span>
+            <div class="stack-icon"></div>
+            <div class="stack-info"><div class="stack-name">Swift</div><div class="stack-role">NATIVE IOS</div></div>
+        </div>
+        <div class="tech-glass brackets stack-item"><span></span>
+            <div class="stack-icon"></div>
+            <div class="stack-info"><div class="stack-name">Kotlin</div><div class="stack-role">NATIVE ANDROID</div></div>
+        </div>
+    </div>
+</div>
+    </div>
+</body>
+</html>

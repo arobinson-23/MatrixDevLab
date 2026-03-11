@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATRIX DEV LAB | Next-Gen Web Solutions</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --text-main: #111418;
+            --text-muted: #5e656d;
+            --accent: #00e5ff;
+            --font-heading: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            --bracket-size: 6px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-heading);
+            overflow: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Grid Background */
+        .grid-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(17, 20, 24, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(17, 20, 24, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: 0;
+            pointer-events: none;
+            transform: perspective(1000px) rotateX(60deg) scale(2.5) translateY(-20%);
+            transform-origin: top center;
+            opacity: 0.5;
+        }
+
+        .split-line {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 1px;
+            height: 100vh;
+            background: linear-gradient(to bottom, transparent, rgba(17, 20, 24, 0.1), transparent);
+            z-index: 10;
+            transform: translateX(-50%);
+        }
+
+        /* Top Navigation */
+        nav {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        nav>* {
+            pointer-events: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-heading);
+            font-weight: 900;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .nav-center {
+            display: flex;
+            gap: 4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--text-main);
+            text-decoration: none;
+            position: relative;
+        }
+
+        .nav-link::before {
+            content: '// ';
+            opacity: 0.4;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .lang-toggle {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--text-main);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+
+        /* Left Pane */
+        .left-pane {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50vw;
+            height: 100vh;
+            padding: 0 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        /* Quantum Schematic BG */
+        .circuit-bg {
+            position: absolute;
+            bottom: -10%;
+            left: -10%;
+            width: 80%;
+            height: 80%;
+            opacity: 0.05;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .overline {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            letter-spacing: 0.2em;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .headline {
+            font-size: 5vw;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 2.5rem;
+        }
+
+        .headline span.bold {
+            font-weight: 800;
+            display: block;
+        }
+
+        .headline span.thin {
+            font-weight: 200;
+            display: block;
+            color: var(--text-muted);
+        }
+
+        .description {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+            max-width: 80%;
+            margin-bottom: 3.5rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        /* Tech Brackets & Glass */
+        .tech-glass {
+            position: relative;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 2rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-main);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .brackets::before,
+        .brackets::after {
+            content: '';
+            position: absolute;
+            width: var(--bracket-size);
+            height: var(--bracket-size);
+            border: 1px solid var(--text-main);
+        }
+
+        .brackets::before {
+            top: -1px;
+            left: -1px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .brackets::after {
+            bottom: -1px;
+            right: -1px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .brackets span::before,
+        .brackets span::after {
+            content: '';
+            position: absolute;
+            width: var(--bracket-size);
+            height: var(--bracket-size);
+            border: 1px solid var(--text-main);
+        }
+
+        .brackets span::before {
+            top: -1px;
+            right: -1px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .brackets span::after {
+            bottom: -1px;
+            left: -1px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .stats-row {
+            position: absolute;
+            bottom: 3rem;
+            left: 4rem;
+            right: 4rem;
+            display: flex;
+            gap: 1rem;
+            height: 80px;
+        }
+
+        .stat-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0 1.25rem;
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-lbl {
+            font-family: var(--font-mono);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        /* Right Pane & WebGL */
+        .right-pane {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50vw;
+            height: 100vh;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        #canvas-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(0, 229, 255, 0.05) 0%, transparent 60%);
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* HUD */
+        .hud-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .hud-label {
+            position: absolute;
+            padding: 0.5rem 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            white-space: nowrap;
+        }
+
+        .hud-line {
+            position: absolute;
+            background: rgba(17, 20, 24, 0.3);
+            height: 1px;
+            transform-origin: 0% 50%;
+        }
+
+        .hud-dot {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border: 1px solid var(--text-main);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Extra styles for sub pages */
+        .page-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-top: 6rem;
+            padding-bottom: 2rem;
+        }
+
+        .scrollable {
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        .scrollable::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .scrollable::-webkit-scrollbar-track {
+            background: rgba(17, 20, 24, 0.05);
+        }
+
+        .scrollable::-webkit-scrollbar-thumb {
+            background: rgba(17, 20, 24, 0.2);
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .service-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1.5rem;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .service-card h3 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .service-card p {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            text-transform: none;
+        }
+
+        .stack-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            justify-content: flex-start;
+        }
+
+        .stack-icon {
+            width: 24px;
+            height: 24px;
+            border: 1px dashed var(--text-muted);
+            opacity: 0.6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stack-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .stack-name {
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+
+        .stack-role {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+            width: 100%;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(17, 20, 24, 0.2);
+            padding: 0.75rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s ease;
+            resize: vertical;
+        }
+
+        .form-control:focus {
+            border-color: var(--text-main);
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        select.form-control {
+            appearance: none;
+            border-radius: 0;
+            cursor: pointer;
+        }
+
+        /* --- Responsive Media Queries --- */
+        @media (max-width: 1024px) {
+            nav {
+                padding: 1.5rem 2rem;
+            }
+
+            .nav-center {
+                gap: 1.5rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .left-pane {
+                padding: 0 2rem;
+            }
+
+            .stats-row {
+                left: 2rem;
+                right: 2rem;
+                bottom: 2rem;
+            }
+
+            .stat-box {
+                padding: 0 0.5rem;
+            }
+
+            .stat-val {
+                font-size: 1.25rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            body,
+            html {
+                height: auto;
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            .split-line {
+                display: none;
+            }
+
+            nav {
+                position: relative;
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 2rem 1.5rem;
+            }
+
+            .nav-center {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1.5rem;
+            }
+
+            .left-pane {
+                position: relative;
+                width: 100vw;
+                height: auto;
+                padding: 2rem 1.5rem 4rem 1.5rem;
+                align-items: center;
+                text-align: center;
+                z-index: 5;
+            }
+
+            .overline {
+                margin-bottom: 1.5rem;
+            }
+
+            .headline {
+                font-size: 3rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .description {
+                max-width: 100%;
+                margin-bottom: 2.5rem;
+            }
+
+            .actions {
+                flex-direction: column;
+                width: 100%;
+                max-width: 320px;
+                gap: 1rem;
+            }
+
+            .actions>* {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem 1.5rem !important;
+                text-align: center;
+            }
+
+            .stats-row {
+                position: relative;
+                left: auto;
+                right: auto;
+                bottom: auto;
+                margin-top: 3rem;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                height: auto;
+                width: 100%;
+                max-width: 500px;
+            }
+
+            .stat-box {
+                align-items: center;
+                padding: 1.5rem 1rem;
+            }
+
+            .right-pane {
+                position: relative;
+                width: 100vw;
+                height: 60vh;
+                min-height: 400px;
+                z-index: 1;
+            }
+
+            .circuit-bg {
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0.03;
+            }
+
+            #hud3-label,
+            #hud3-line,
+            #hud3-dot,
+            #hud4-label,
+            #hud4-line,
+            #hud4-dot {
+                display: none !important;
+            }
+
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .page-content {
+                padding-top: 0;
+                padding: 2rem 1.5rem;
+                height: auto;
+                justify-content: flex-start;
+            }
+
+            .scrollable {
+                overflow-y: visible;
+                padding-right: 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .headline {
+                font-size: 2.5rem;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-center {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+
+            .right-pane {
+                height: 50vh;
+                min-height: 350px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Background Grid -->
+    <div class="grid-bg"></div>
+    <div class="split-line"></div>
+
+    <!-- Top Nav -->
+    <nav>
+        <div class="logo">
+            <svg class="logo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" />
+                <path d="M2 12h20M12 2v20" />
+                <circle cx="12" cy="12" r="4" fill="currentColor" />
+            </svg>
+            MATRIX DEV LAB
+        </div>
+        <div class="nav-center">
+            <div class="nav-links">
+                <a href="services.html" class="nav-link">Services</a>
+                <a href="stack.html" class="nav-link">Stack</a>
+            </div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+        </div>
+        <div class="nav-right">
+            <span class="lang-toggle">v EN</span>
+            <button class="btn-primary">Get in touch</button>
+        </div>
+    </nav>
+
+    <!-- Left Pane -->
+    <div class="left-pane">
+        <canvas id="circuit-canvas" class="circuit-bg"></canvas>
+
+        <div class="content">
+            <div class="overline">// ELITE SOFTWARE ENGINEERING</div>
+            <h1 class="headline">
+                <span class="bold">Next-gen web apps.</span>
+                <span class="thin">Engineered to reality.</span>
+            </h1>
+            <p class="description">
+                We build high-performance web applications, websites, mobile apps, and digital platforms for modern
+                companies. Our
+                elite team of
+                developers synthesizes functional design and scalable architecture into breathtaking experiences.
+            </p>
+            <div class="actions">
+                <!-- Button 1: Glass & Brackets -->
+                <a href="#" class="tech-glass brackets">
+                    <span></span> Start Project
+                </a>
+                <!-- Button 2: Solid Dark -->
+                <button class="btn-primary" style="padding: 1.15rem 2.5rem;">View Work</button>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-box tech-glass brackets"><span></span>
+                <div class="stat-val">150+</div>
+                <div class="stat-lbl">Deployments</div>
+            </div>
+            <div class="stat-box tech-glass brackets"><span></span>
+                <div class="stat-val">100/100</div>
+                <div class="stat-lbl">Lighthouse</div>
+            </div>
+            <div class="stat-box tech-glass brackets"><span></span>
+                <div class="stat-val">0ms</div>
+                <div class="stat-lbl">Downtime</div>
+            </div>
+            <div class="stat-box tech-glass brackets"><span></span>
+                <div class="stat-val">99.9%</div>
+                <div class="stat-lbl">Client Retention</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Pane -->
+    <div class="right-pane">
+        <div id="canvas-container">
+            <canvas id="gl-canvas"></canvas>
+            <div class="hud-container" id="hud-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- QUANTUM CIRCUIT SCHEMATIC (LEFT BACKGROUND) ---
+        const circuitCanvas = document.getElementById('circuit-canvas');
+        const ctx = circuitCanvas.getContext('2d');
+        let cw, ch;
+
+        function resizeCircuit() {
+            cw = circuitCanvas.width = circuitCanvas.clientWidth * 2;
+            ch = circuitCanvas.height = circuitCanvas.clientHeight * 2;
+            drawCircuit();
+        }
+
+        function drawCircuit() {
+            ctx.clearRect(0, 0, cw, ch);
+            ctx.strokeStyle = '#111418';
+            ctx.lineWidth = 1;
+            const cx = cw / 2, cy = ch / 2;
+
+            // Draw isometric grid
+            ctx.beginPath();
+            for (let i = -cw; i < cw * 2; i += 40) {
+                ctx.moveTo(i, 0); ctx.lineTo(i + ch, ch);
+                ctx.moveTo(i, ch); ctx.lineTo(i + ch, 0);
+            }
+            ctx.stroke();
+
+            // Draw schematic lines
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            const nodes = [];
+            for (let i = 0; i < 30; i++) {
+                nodes.push({ x: Math.random() * cw, y: Math.random() * ch });
+            }
+            nodes.forEach((n, i) => {
+                if (i > 0) {
+                    ctx.moveTo(nodes[i - 1].x, nodes[i - 1].y);
+                    // Orthogonal paths
+                    if (Math.random() > 0.5) {
+                        ctx.lineTo(n.x, nodes[i - 1].y); ctx.lineTo(n.x, n.y);
+                    } else {
+                        ctx.lineTo(nodes[i - 1].x, n.y); ctx.lineTo(n.x, n.y);
+                    }
+                }
+                ctx.rect(n.x - 4, n.y - 4, 8, 8);
+            });
+            ctx.stroke();
+
+            // Concentric circles
+            ctx.beginPath();
+            ctx.arc(cx, cy, ch * 0.3, 0, Math.PI * 2);
+            ctx.arc(cx, cy, ch * 0.32, 0, Math.PI * 2);
+            // dash array
+            ctx.setLineDash([5, 15]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        window.addEventListener('resize', resizeCircuit);
+        resizeCircuit();
+
+
+        // --- WEBGL QUANTUM NEURAL MATRIX (RIGHT PANE) ---
+        const canvas = document.getElementById('gl-canvas');
+        const gl = canvas.getContext('webgl2', { antialias: true, alpha: true });
+
+        if (!gl) { alert('WebGL2 required'); }
+
+        const vsSource = `#version 300 es
+uniform float uTime;
+uniform vec2 uResolution;
+out vec4 vColor;
+
+// Hash function
+float hash(float n) { return fract(sin(n) * 43758.5453123); }
+
+// Rotation matrix
+mat3 rotX(float a) { float s=sin(a),c=cos(a); return mat3(1,0,0,0,c,-s,0,s,c); }
+mat3 rotY(float a) { float s=sin(a),c=cos(a); return mat3(c,0,s,0,1,0,-s,0,c); }
+mat3 rotZ(float a) { float s=sin(a),c=cos(a); return mat3(c,-s,0,s,c,0,0,0,1); }
+
+// Simplex noise inspired organic movement
+vec3 flow(vec3 p, float t) {
+    p += sin(p.zxy * 2.0 + t) * 0.1;
+    return p;
+}
+
+void main() {
+    float id = float(gl_VertexID);
+    
+    // Core parameters
+    float numParticles = 80000.0;
+    float normId = id / numParticles;
+    
+    // Create organic distributions with high core density
+    float h1 = hash(id);
+    float r = pow(h1, 3.0) * 8.0; // Dense core
+    float theta = hash(id * 1.2) * 6.28318;
+    float phi = acos(2.0 * hash(id * 1.5) - 1.0);
+    
+    // Spherical base forming energetic streams
+    vec3 basePos = vec3(
+        r * sin(phi) * cos(theta),
+        r * sin(phi) * sin(theta),
+        r * cos(phi)
+    );
+    
+    // Apply flowing perturbation
+    float t = uTime * 0.3;
+    vec3 pos = basePos;
+    
+    // Multiple layers of deformation creating fiber-optic streams
+    pos = flow(pos, t + normId * 20.0);
+    pos = flow(pos * 2.0, -t * 1.5) / 2.0;
+    
+    // Structural compression
+    pos.y *= 1.2;
+    pos.x *= 1.2;
+    
+    // Add rotational motion around core
+    pos = rotY(t * 0.6 + r * 0.1) * rotX(t * 0.3) * rotZ(sin(t*0.2)*0.5) * pos;
+    
+    // Projection
+    float aspect = uResolution.x / uResolution.y;
+    vec2 projPos = pos.xy * 0.25;
+    projPos.x /= aspect;
+    
+    // Offset to look asymmetrical
+    projPos.x -= 0.1;
+    projPos.y += 0.05;
+    
+    gl_Position = vec4(projPos, pos.z * 0.1, 1.0);
+    
+    // Calculate color based on distance and angle
+    float dist = length(pos);
+    
+    // Hot cyan core
+    vec3 colCore = vec3(0.0, 1.0, 1.0);
+    // Outer magenta / orange
+    vec3 colOuter = mix(vec3(1.0, 0.0, 1.0), vec3(1.0, 0.3, 0.0), fract(theta * 3.0 + t));
+    // Electric blue mids
+    vec3 colMid = vec3(0.0, 0.3, 1.0);
+    
+    vec3 color = mix(colCore, colMid, smoothstep(0.0, 2.0, dist));
+    color = mix(color, colOuter, smoothstep(2.0, 5.0, dist));
+    
+    // Pulse energy
+    float pulse = sin(normId * 100.0 - t * 5.0) * 0.5 + 0.5;
+    color += vec3(pulse * 0.5) * smoothstep(4.0, 0.0, dist); // core flash
+    
+    // Fade out edges and depth
+    float alpha = smoothstep(6.0, 2.0, dist) * 0.8;
+    // Depth fade
+    alpha *= smoothstep(-3.0, 3.0, pos.z);
+    
+    // Invert rendering for dark on light background.
+    // Wait, prompt says: "Blinding hot-cyan white core radiating..."
+    // If bg is off-white, glowing colors need to have difference or multiply blend.
+    // We will output direct colors and use CSS mix-blend-mode: multiply or darken,
+    // actually, for additive glowing particles on a light BG, we instead invert the colors
+    // so they are dark cyan/magenta and act as subtractive. 
+    // Or, we render normally on dark, but requirement is "sleek, stark off-white/silver-grey" bg.
+    // We can do subtractive blending: multiply
+    // Or we just draw them dark and vivid with small alpha.
+    
+    // Let's make the colors deep and vivid for light bg
+    color = clamp(color, 0.0, 1.0);
+    
+    // Blinding white/cyan core effect
+    float coreGlow = smoothstep(1.0, 0.0, dist);
+    color = mix(color, vec3(0.0, 0.9, 1.0), coreGlow * 0.8);
+    
+    // Deepen colors for contrast on light background
+    color = mix(vec3(0.02), color, 0.75); // Slightly darker
+    
+    // Output
+    vColor = vec4(color, alpha * (0.3 + coreGlow * 0.7)); // Core is brighter
+    
+    // Size attenuation
+    float size = 1.0 + (3.0 - dist * 0.5) + pulse * 2.0;
+    gl_PointSize = max(1.0, size * (1.2 + pos.z * 0.3));
+}
+`;
+
+        const fsSource = `#version 300 es
+precision highp float;
+in vec4 vColor;
+out vec4 fragColor;
+void main() {
+    vec2 pc = gl_PointCoord - 0.5;
+    // Soft circle
+    float dist = length(pc);
+    if(dist > 0.5) discard;
+    
+    float alpha = smoothstep(0.5, 0.0, dist) * vColor.a;
+    fragColor = vec4(vColor.rgb, alpha);
+}
+`;
+
+        function createShader(gl, type, source) {
+            const s = gl.createShader(type);
+            gl.shaderSource(s, source);
+            gl.compileShader(s);
+            if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+                console.error(gl.getShaderInfoLog(s));
+                gl.deleteShader(s);
+                return null;
+            }
+            return s;
+        }
+
+        const vs = createShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fs = createShader(gl, gl.FRAGMENT_SHADER, fsSource);
+        const prog = gl.createProgram();
+        gl.attachShader(prog, vs);
+        gl.attachShader(prog, fs);
+        gl.linkProgram(prog);
+
+        gl.useProgram(prog);
+
+        const uTime = gl.getUniformLocation(prog, "uTime");
+        const uResolution = gl.getUniformLocation(prog, "uResolution");
+
+        // Blending for light theme (Subtractive-like vivid)
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        // gl.blendFunc(gl.DST_COLOR, gl.ZERO); // For multiply
+
+        function resizeGL() {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvas.clientWidth * dpr;
+            canvas.height = canvas.clientHeight * dpr;
+            gl.viewport(0, 0, canvas.width, canvas.height);
+            gl.uniform2f(uResolution, canvas.width, canvas.height);
+        }
+        window.addEventListener('resize', resizeGL);
+        resizeGL();
+
+        let startTime = performance.now();
+        function renderGL(t) {
+            let time = (t - startTime) * 0.001;
+            gl.clearColor(0, 0, 0, 0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+
+            gl.uniform1f(uTime, time);
+            gl.drawArrays(gl.POINTS, 0, 80000);
+
+            // Update HUD pointing to matrix core dynamically
+            updateHUD(time);
+
+            requestAnimationFrame(renderGL);
+        }
+
+
+        // --- DYNAMIC HUD LABELS ---
+        const hudContainer = document.getElementById('hud-container');
+        const huds = [
+            { id: 'hud1', label: 'PERFORMANCE: OPTIMAL', targetX: 0.6, targetY: 0.4, labelRX: 0.8, labelRY: 0.2 },
+            { id: 'hud2', label: 'SYSTEM ARCHITECTURE', targetX: 0.45, targetY: 0.55, labelRX: 0.2, labelRY: 0.7 },
+            { id: 'hud3', label: 'DEPLOYMENT PIPELINE', targetX: 0.5, targetY: 0.35, labelRX: 0.3, labelRY: 0.2 },
+            { id: 'hud4', label: 'USER ENGAGEMENT', targetX: 0.65, targetY: 0.65, labelRX: 0.8, labelRY: 0.8 },
+        ];
+
+        huds.forEach(h => {
+            // Label
+            const div = document.createElement('div');
+            div.className = 'hud-label tech-glass brackets';
+            div.innerHTML = `<span></span>${h.label}`;
+            div.id = h.id + '-label';
+            // Line
+            const line = document.createElement('div');
+            line.className = 'hud-line';
+            line.id = h.id + '-line';
+            // Dot
+            const dot = document.createElement('div');
+            dot.className = 'hud-dot';
+            dot.id = h.id + '-dot';
+
+            hudContainer.appendChild(div);
+            hudContainer.appendChild(line);
+            hudContainer.appendChild(dot);
+            h.els = { div, line, dot };
+        });
+
+        function updateHUD(t) {
+            const w = hudContainer.clientWidth;
+            const h = hudContainer.clientHeight;
+
+            huds.forEach((hud, i) => {
+                // Add some organic drift to matrix targets
+                const tx = w * (hud.targetX + Math.sin(t * 0.5 + i) * 0.05);
+                const ty = h * (hud.targetY + Math.cos(t * 0.3 + i * 2) * 0.05);
+
+                const lx = w * hud.labelRX;
+                const ly = h * hud.labelRY;
+
+                hud.els.div.style.left = lx + 'px';
+                hud.els.div.style.top = ly + 'px';
+
+                hud.els.dot.style.left = tx + 'px';
+                hud.els.dot.style.top = ty + 'px';
+
+                // Line connects label to target
+                const dx = tx - lx;
+                const dy = ty - ly;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx);
+
+                hud.els.line.style.left = lx + 'px';
+                hud.els.line.style.top = ly + 'px';
+                hud.els.line.style.width = dist + 'px';
+                hud.els.line.style.transform = `rotate(${angle}rad)`;
+            });
+        }
+
+        // Start
+        requestAnimationFrame(renderGL);
+
+    </script>
+</body>
+
+</html>
