@@ -410,18 +410,18 @@
             <span class="bold">Let's build</span>
             <span class="thin">together.</span>
         </h1>
-        <form style="max-width: 600px;">
+        <form action="https://formspree.io/f/mqaebrjr" method="POST" style="max-width: 600px;">
             <div class="form-group">
                 <label class="form-label">Name</label>
-                <input type="text" class="form-control" placeholder="Enter your full name">
+                <input type="text" name="name" class="form-control" placeholder="Enter your full name" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Email</label>
-                <input type="email" class="form-control" placeholder="Enter your email address">
+                <input type="email" name="_replyto" class="form-control" placeholder="Enter your email address" required>
             </div>
             <div class="form-group">
                 <label class="form-label">Service Interested In</label>
-                <select class="form-control">
+                <select name="service" class="form-control">
                     <option>Web App Development</option>
                     <option>Desktop App Development</option>
                     <option>Mobile App Development</option>
@@ -430,10 +430,10 @@
             </div>
             <div class="form-group" style="margin-bottom: 2rem;">
                 <label class="form-label">Message</label>
-                <textarea class="form-control" rows="5" placeholder="Tell us about your project..."></textarea>
+                <textarea name="message" class="form-control" rows="5" placeholder="Tell us about your project..." required></textarea>
             </div>
             <div>
-                <button type="button" class="btn-primary"
+                <button type="submit" class="btn-primary"
                     style="padding: 1.15rem 2.5rem; width: 100%;">Initialize</button>
             </div>
         </form>
